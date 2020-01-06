@@ -1,24 +1,46 @@
-import { add, tuggleIsDone } from '../actionType/index';
+import { add, tuggleIsDone, saveToLocalStorage,sortToDoList,deleteItem } from '../actionType/index';
 import formatDate from '../plugs/formatDate';
 
-function addToDo(detail){
+
+function addToDo(detail) {
     const date = formatDate();
-    console.log('添加一个项目',date);
     return {
-        type:add,
-        detail:detail,
-        createTime:date
+        type: add,
+        detail: detail,
+        createTime: date
     }
 }
 
-function tuggle(detail){
-    return  {
-        type:tuggleIsDone,
-        detail:detail
+function tuggle(detail) {
+    return {
+        type: tuggleIsDone,
+        detail: detail
     }
 }
 
-export {    
+function saveToLocal() {
+    return {
+        type: saveToLocalStorage
+    }
+}
+
+function sortList(){
+    return {
+        type:sortToDoList
+    }
+}
+
+function delItem(detail){
+    return {
+        type:deleteItem,
+        detail
+    }
+}
+
+export {
     addToDo,
-    tuggle
+    tuggle,
+    saveToLocal,
+    sortList,
+    delItem
 }

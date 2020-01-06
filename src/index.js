@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import ToDoList from './page/ToDoList.jsx';
 
 // ant design
-import { Button, Drawer, Input } from 'antd';
+import { Button, Drawer, Input,message } from 'antd';
 import 'antd/dist/antd.css';
 
 // 样式
@@ -17,18 +17,13 @@ import { createStore } from 'redux';
 import toDoStore from './reducer/reducer';
 
 // 测试代码开始
-import formatDate from './plugs/formatDate';
-import { addToDo, tuggle } from './action/index';
+import { addToDo, saveToLocal,sortList } from './action/index';
 
-let store = createStore(toDoStore, [
-    { createTime: formatDate(), detail: '吃稀饭', isDone: false },
-    { createTime: formatDate(), detail: '吃g饭', isDone: false },
-    { createTime: formatDate(), detail: '吃s饭', isDone: false }
-]);
+let store = createStore(toDoStore);
 
-const unSubscribe = store.subscribe(() => console.log('监听到状态改变:', store.getState()));
+// const unSubscribe = 
+// store.subscribe(() => console.log('监听到状态改变:', store.getState()));
 
-setTimeout(() => store.dispatch(tuggle("吃西瓜")), 3000);
 
 // 测试代码结束
 
@@ -49,7 +44,7 @@ class Header extends React.Component {
 class App extends React.Component {
     state = {
         visiable: false,
-        value:''
+        value: ''
     }
 
     addEvent() {
@@ -60,26 +55,33 @@ class App extends React.Component {
 
     closeDrawer() {
         this.setState({
-            visiable: false
+            visiable: false,
+            value:''
         })
     }
 
-
     render() {
-        console.log(this.props);
         return <>
             <Header addEvent={this.addEvent.bind(this)}></Header>
 
             <Drawer title="添加事项" placement="bottom" closable={false} onClose={this.closeDrawer.bind(this)} visible={this.state.visiable}>
                 <div className='addEvent'>
                     <div>添加事项：</div>
-                    <Input placeholder="请输入事件描述:" onChange={(e) => this.setState({
-                        value:e.target.value
-                    })}/>
+                    <Input placeholder="请输入事件描述:" onChange={(e) => this.setState({ value: e.target.value })} value={this.state.value}/>
                 </div>
                 <div className='affirm'>
                     <Button type="danger" onClick={this.closeDrawer.bind(this)}>取消</Button>
-                    <Button type="primary" onClick={() => this.props.store.dispatch(()=>addToDo(this.state.value))}>确定</Button>
+                    <Button type="primary" onClick={async () => {
+                        await store.dispatch(addToDo(this.state.value));
+                        await store.dispatch(sortList());
+                        await store.dispatch(saveToLocal());
+                        this.closeDrawer();
+                        message.success('添加成功');
+                        this.setState({
+                            value:''
+                        })
+                    }
+                    }>确定</Button>
                 </div>
             </Drawer>
 
@@ -87,4 +89,4 @@ class App extends React.Component {
         </>
     }
 }
-ReactDOM.render(<Provider store={store}><App store={store}/></Provider>, document.getElementById('root'))
+ReactDOM.render(<Provider store={store}><App store={store} /></Provider>, document.getElementById('root'))
