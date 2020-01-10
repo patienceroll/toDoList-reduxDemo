@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { List, Switch, Button, Modal } from 'antd';
+import { List, Switch, Button, Modal, Row, Col } from 'antd';
 
 import './ToDoList.css';
 
@@ -12,6 +12,8 @@ function showConfirm() {
     confirm({
         title: '确定要清空所有事项吗?',
         content: '此操作不可逆',
+        cancelText: '取消',
+        okText:'确定',
         onOk() {
             localStorage.clear();
             window.location.reload();
@@ -36,24 +38,35 @@ class ToDoList extends React.Component {
                 bordered
                 dataSource={list}
                 renderItem={item =>
-                    <List.Item style={{ display: 'flex', justifyContent: 'space-around' }}>
+                    <List.Item >
+                        <Row style={{width:'100%'}}>
+                            <Col span={4}>
+                                <Switch checkedChildren="已完成" unCheckedChildren="未完成" checked={item.isDone} onChange={() => {
+                                    store.dispatch(tuggle(item.detail));
+                                    store.dispatch(sortList());
+                                    store.dispatch(saveToLocal());
+                                    this.forceUpdate();
+                                }} />
+                            </Col>
 
-                        <Switch checkedChildren="已完成" unCheckedChildren="未完成" checked={item.isDone} onChange={async () => {
-                            await store.dispatch(tuggle(item.detail));
-                            await store.dispatch(sortList());
-                            await store.dispatch(saveToLocal());
-                            this.forceUpdate();
-                        }} />
+                            <Col span={8}>
+                                <span>{item.detail}</span>
+                            </Col>
 
-                        <span>{item.detail}</span>
-                        <span>创建时间：{item.createTime}</span>
+                            <Col span={8}>
+                                <span>创建时间：{item.createTime}</span>
+                            </Col>
 
-                        <Button type="danger" onClick={() => {
-                            store.dispatch(delItem(item.detail));
-                            store.dispatch(saveToLocal());
-                            this.forceUpdate();
-                        }}>删除</Button>
+                            <Col span={4}>
+                                <Button type="primary" onClick={() => this.props.showDrawer(false, item.detail)}>修改</Button>
+                                <Button type="danger" onClick={() => {
+                                    store.dispatch(delItem(item.detail));
+                                    store.dispatch(saveToLocal());
+                                    this.forceUpdate();
+                                }}>删除</Button>
+                            </Col>
 
+                        </Row>
                     </List.Item>
                 }
             />

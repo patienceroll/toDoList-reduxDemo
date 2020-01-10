@@ -1,4 +1,4 @@
-import { add, tuggleIsDone, saveToLocalStorage,sortToDoList,deleteItem } from '../actionType/index';
+import { add, tuggleIsDone, saveToLocalStorage,sortToDoList,deleteItem ,edit} from '../actionType/index';
 import formatDate from '../plugs/formatDate';
 
 
@@ -37,10 +37,18 @@ function delItem(detail){
     }
 }
 
+function editItem(detail,editDetail){
+    return {
+        type:edit,
+        detail,
+        editDetail
+    }
+}
 export {
     addToDo,
     tuggle,
     saveToLocal,
     sortList,
-    delItem
+    delItem,
+    editItem
 }
