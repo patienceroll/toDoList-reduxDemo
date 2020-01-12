@@ -49,11 +49,11 @@ class App extends React.Component {
         listValue: ''
     }
 
-    showDrawer(isAdd,detail) {
+    showDrawer(isAdd, detail) {
         this.setState({
             isAdd: isAdd,
-            value:detail,
-            listValue:detail,
+            value: detail,
+            listValue: detail,
             visiable: true
         })
     }
@@ -77,8 +77,7 @@ class App extends React.Component {
     }
 
     editListItem() {
-        console.log(this.state.listValue,this.state.value);
-        store.dispatch(editItem(this.state.listValue,this.state.value));
+        store.dispatch(editItem(this.state.listValue, this.state.value));
         this.closeDrawer();
         message.success('修改成功');
         this.setState({
@@ -90,13 +89,13 @@ class App extends React.Component {
         return <>
             <Header showDrawer={this.showDrawer.bind(this)}></Header>
 
-            <Drawer title={this.state.isAdd ? '添加事项' : '修改事项'} placement="bottom" closable={false} onClose={this.closeDrawer.bind(this)} visible={this.state.visiable}>
-                
-                <div className='addEvent'>
+            <Drawer title={this.state.isAdd ? '添加事项' : '修改事项'} placement="top" closable={false} onClose={this.closeDrawer.bind(this)} visible={this.state.visiable}>
+
+                <div className='addEvent' style={{padding:'0 25%'}}>
                     <div>{this.state.isAdd ? '添加事项' : '修改事项'}</div>
-                    <Input placeholder="请输入事件描述:" onChange={(e) => this.setState({ value: e.target.value })} value={this.state.value} />
+                    <Input placeholder="请输入事件描述:"  onChange={(e) => this.setState({ value: e.target.value })} onPressEnter={() => this.addList()} value={this.state.value} />
                 </div>
-               
+
                 <div className='affirm'>
                     <Button type="danger" onClick={this.closeDrawer.bind(this)}>取消</Button>
                     <Button type="primary" onClick={() => { this.state.isAdd ? this.addList() : this.editListItem() }}>确定</Button>
